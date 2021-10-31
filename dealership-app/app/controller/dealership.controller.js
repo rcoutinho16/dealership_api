@@ -37,6 +37,6 @@ async function initDealership(){
         saturdayClosing: "12:00",
         address: "Avenida Jove Soares, 123"
     });
-    const newDealership = dealership.save();
+    const newDealership = await dealership.save();
     return newDealership;
 }

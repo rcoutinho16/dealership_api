@@ -10,17 +10,17 @@ authJwt.verifyToken = (req, res, next) => {
     let token = req.headers["x-access-token"];
 
     if (!token) {
-        return res.status(403).send({ message: "No token provided" });
+        return res.status(403).json({ message: "No token provided" });
     }
 
     jwt.verify(token, config.secret, (err, decoded) => {
         if(err){
-            return res.status(401).send({ message: "Unauthorized" });
+            return res.status(401).json({ message: "Unauthorized" });
         }
         req.userId = decoded.id;
         next();
     });
-}
+};
 
 authJwt.isAdmin = async (req, res, next) => {
     try {
@@ -28,22 +28,16 @@ authJwt.isAdmin = async (req, res, next) => {
         const roles = await Roles.find({
             _id: {$in: user.roles }
         });
-
         for (let i = 0; i < roles.length; ++i){
             if(roles[i].name === "admin") {
                 next();
                 return;
             }
         }
-
-        res.status(403).send({ message: "Require Admin Role" });
-        return;
-
+        return res.status(403).json({ message: "Require Admin Role" });
     } catch (err) {
-        req.status(500).send({ message: err.message });
-        return;
+        return req.status(500).json({ message: err.message });
     }
-
-}
+};
 
 module.exports = authJwt;

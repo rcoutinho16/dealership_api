@@ -7,7 +7,7 @@ exports.getCar = async (req, res, next) => {
         if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
             car = await Car.findById(req.params.id);
         }
-        if (car == null){
+        if (!car){
             return res.status(404).json({ message: 'Cannot find car' });
         }
     } catch (err) {
@@ -15,4 +15,4 @@ exports.getCar = async (req, res, next) => {
     }
     res.car = car;
     next();
-}
+};
