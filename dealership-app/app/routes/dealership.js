@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const Dealership = require('../models/dealership');
+const db = require('../models/');
+const Dealership = db.dealership;
 
 // Getting One Dealership
 router.get('/', async (req, res) => {
