@@ -34,4 +34,4 @@ router.delete('/:id',
     ], car.deleteCar
 );
 
-module.exports = router
+module.exports = router;

@@ -14,6 +14,7 @@ db.mongoose
     .then(() => {
         console.log("Connected to the database!");
         util.initializeRoles();
+        util.initializeUsers();
     })
     .catch(err => {
         console.log("Cannot connect to the database!", err);
@@ -38,6 +39,10 @@ app.use('/api/cars', carRouter);
 //dealership route
 const dealershipRouter = require('./app/routes/dealership.route');
 app.use('/api/dealership', dealershipRouter);
+
+//users route
+const usersRouter = require('./app/routes/user.route');
+app.use('/api/users', usersRouter);
 
 //test route
 const testRouter = require('./app/routes/test.route');

@@ -14,15 +14,15 @@ exports.signup = async (req, res) => {
             password: bcrypt.hashSync(req.body.password, 12)
         });
         let newUser = await user.save();
-        if (req.body.roles) {
-            const roles = await Role.find({ name: { $in: req.body.roles } });
-            newUser.roles = roles.map(role => role._id);
-            await newUser.save();
-        } else {
+        //if (req.body.roles) {
+        //    const roles = await Role.find({ name: { $in: req.body.roles } });
+        //    newUser.roles = roles.map(role => role._id);
+        //    await newUser.save();
+        //} else {
             const role = await Role.findOne({ name: "user" });
             user.roles = [role._id];
             await user.save();
-        }
+        //}
         res.status(201).json(newUser);
      } catch (err) {
         res.status(500).json({ message: err.message });
@@ -31,9 +31,9 @@ exports.signup = async (req, res) => {
 
 exports.signin = async (req, res) => {
     try {
-        const user = await User.findOne({ username: req.body.username}).populate("roles", "-__v");
+        const user = await User.findOne({ username: req.body.username }).populate("roles", "-__v");
         if (!user) {
-            return res.status(401).json({ message: "Invalid User/Password" });
+            return res.status(401).json({ message: "Invalid Username/Password" });
         }
         
         var passwordIsValid = bcrypt.compareSync(
@@ -42,7 +42,7 @@ exports.signin = async (req, res) => {
         );
         
         if (!passwordIsValid) {
-            return res.status(401).json({ message: "Invalid User/Password" });
+            return res.status(401).json({ message: "Invalid Username/Password" });
         }
 
         var token = jwt.sign({ id: user.id }, config.secret, {
