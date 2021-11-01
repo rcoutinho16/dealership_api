@@ -20,9 +20,10 @@ exports.signup = async (req, res) => {
         //    await newUser.save();
         //} else {
             const role = await Role.findOne({ name: "user" });
-            user.roles = [role._id];
-            await user.save();
+            newUser.roles = [role._id];
+            await newUser.save();
         //}
+        newUser.password = "";
         res.status(201).json(newUser);
      } catch (err) {
         res.status(500).json({ message: err.message });

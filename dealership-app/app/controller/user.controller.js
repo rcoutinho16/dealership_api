@@ -5,8 +5,23 @@ const bcrypt = require("bcryptjs");
 
 exports.getUsers = async (req, res) => {
     try {
-        const users = await User.find({}, 'username email');
-        res.json(users);
+        let users = await User.find({}, 'username email').populate("roles", "-__v");
+
+        let response = [];
+
+        for (let i = 0; i < users.length; ++i) {
+            let authorities = [];
+            for (let j = 0; j < users[i].roles.length; ++j) {
+                authorities.push("ROLE_" + users[i].roles[j].name.toUpperCase());
+            }
+            response.push({
+                _id: users[i]._id,
+                username: users[i].username,
+                email: users[i].email,
+                roles: authorities
+            });
+        }
+        res.json(response);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

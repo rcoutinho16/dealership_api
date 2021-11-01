@@ -25,45 +25,48 @@ authJwt.verifyToken = (req, res, next) => {
 authJwt.isAdmin = async (req, res, next) => {
     try {
         const user = await User.findById(req.userId);
-        const roles = await Roles.find({
-            _id: {$in: user.roles }
-        });
-        for (let i = 0; i < roles.length; ++i){
-            if(roles[i].name === "admin") {
-                next();
-                return;
+        if (user) {
+            const roles = await Roles.find({
+                _id: {$in: user.roles }
+            });
+            for (let i = 0; i < roles.length; ++i){
+                if(roles[i].name === "admin") {
+                    next();
+                    return;
+                }
             }
         }
         return res.status(403).json({ message: "Require Admin Role" });
     } catch (err) {
-        return req.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message });
     }
 };
 
 authJwt.isAdminOrYourself = async (req, res, next) => {
     try {
         const user = await User.findById(req.userId);
-        const roles = await Roles.find({
-            _id: {$in: user.roles }
-        });
-        // check if Admin
-        for (let i = 0; i < roles.length; ++i){
-            if(roles[i].name === "admin") {
-                next();
-                return;
+        if (user) {
+            const roles = await Roles.find({
+                _id: {$in: user.roles }
+            });
+            // check if Admin
+            for (let i = 0; i < roles.length; ++i){
+                if(roles[i].name === "admin") {
+                    next();
+                    return;
+                }
+            }
+            //check if Yourself
+            if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+                if(req.params.id === req.userId) {
+                    next();
+                    return;
+                }
             }
         }
-        //check if Yourself
-        if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-            if(req.params.id === req.userId) {
-                next();
-                return;
-            }
-        }
-
         return res.status(403).json({ message: "Require Admin Role" });
     } catch (err) {
-        return req.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message });
     }
 };
 
